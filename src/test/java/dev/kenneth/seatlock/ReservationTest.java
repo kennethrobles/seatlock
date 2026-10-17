@@ -33,4 +33,10 @@ class ReservationTest {
         Reservation r = new Reservation(CREATED);
         assertTrue(r.isExpired(CREATED.plusMinutes(11)));
     }
+
+    @Test
+    void newReservationIsPending() {
+        Reservation r = new Reservation(CREATED); 
+        assertEquals(ReservationStatus.PENDING, r.getStatus());
+    }
 }

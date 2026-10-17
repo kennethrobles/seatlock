@@ -4,15 +4,16 @@ import java.time.LocalDateTime;
 
 // Reserva temporal de un asiento: caduca a los 10 minutos de crearse.
 public class Reservation {
-
     private static final int MINUTOS_RESERVA = 10;
 
     private final LocalDateTime createdAt;
     private final LocalDateTime expiresAt;
+    private ReservationStatus status; // no final: cambiará al confirmar
 
     public Reservation(LocalDateTime createdAt) {
         this.createdAt = createdAt;
         this.expiresAt = createdAt.plusMinutes(MINUTOS_RESERVA);
+        this.status = ReservationStatus.PENDING; // toda reserva nace pendiente
     }
 
     public LocalDateTime getCreatedAt() {
@@ -27,5 +28,9 @@ public class Reservation {
     // Justo en expiresAt aún es válida; caduca después.
     public boolean isExpired(LocalDateTime now) {
         return now.isAfter(expiresAt);
+    }
+
+    public ReservationStatus getStatus() {
+        return status;
     }
 }
