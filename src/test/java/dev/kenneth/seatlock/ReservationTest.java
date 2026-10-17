@@ -36,7 +36,14 @@ class ReservationTest {
 
     @Test
     void newReservationIsPending() {
-        Reservation r = new Reservation(CREATED); 
+        Reservation r = new Reservation(CREATED);
         assertEquals(ReservationStatus.PENDING, r.getStatus());
+    }
+
+    @Test
+    void confirmBeforeExpirationSetsConfirmed() {
+        Reservation r = new Reservation(CREATED);
+        r.confirm(CREATED.plusMinutes(5)); 
+        assertEquals(ReservationStatus.CONFIRMED, r.getStatus());
     }
 }

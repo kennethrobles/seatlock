@@ -33,4 +33,14 @@ public class Reservation {
     public ReservationStatus getStatus() {
         return status;
     }
+
+    public void confirm(LocalDateTime now) {
+        if (!(status == ReservationStatus.PENDING)) {
+            throw new IllegalStateException("Solo se confirma si está pendiente");
+        }
+        if (isExpired(now) == true) {
+            throw new IllegalStateException("No se confirma reserva Caducada");
+        }
+        status = ReservationStatus.CONFIRMED;
+    }
 }
