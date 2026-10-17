@@ -1,7 +1,7 @@
 # SeatLock
 
-REST API for seat reservations that prevents double booking.
+A REST API to book seats for events, like concerts or theater.
+The main goal is to avoid selling the same seat twice when two people try to book it at the same time.
 
-Status: work in progress (domain model in pure Java).
-
-Stack: Java 25, Maven, JUnit. Planned: Spring Boot, PostgreSQL.
+I'm building it step by step while learning Java backend.
+Right now it's just the Maven project with JUnit. Next: the domain classes and their tests.
