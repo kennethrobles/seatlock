@@ -34,12 +34,13 @@ public class Reservation {
         return status;
     }
 
+    // Confirma la reserva si sigue pendiente y no ha caducado.
     public void confirm(LocalDateTime now) {
-        if (!(status == ReservationStatus.PENDING)) {
-            throw new IllegalStateException("Solo se confirma si está pendiente");
+        if (status != ReservationStatus.PENDING) {
+            throw new IllegalStateException("Only PENDING reservations can be confirmed");
         }
-        if (isExpired(now) == true) {
-            throw new IllegalStateException("No se confirma reserva Caducada");
+        if (isExpired(now)) {
+            throw new IllegalStateException("Cannot confirm an expired reservation");
         }
         status = ReservationStatus.CONFIRMED;
     }
