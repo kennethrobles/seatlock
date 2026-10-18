@@ -2,18 +2,18 @@ package dev.kenneth.seatlock;
 
 import java.time.LocalDateTime;
 
-// Reserva temporal de un asiento: caduca a los 10 minutos de crearse.
+// Temporary seat reservation: expires 10 minutes after creation.
 public class Reservation {
-    private static final int MINUTOS_RESERVA = 10;
+    private static final int RESERVATION_MINUTES = 10;
 
     private final LocalDateTime createdAt;
     private final LocalDateTime expiresAt;
-    private ReservationStatus status; // no final: cambiará al confirmar
+    private ReservationStatus status; // not final: changes when confirmed
 
     public Reservation(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-        this.expiresAt = createdAt.plusMinutes(MINUTOS_RESERVA);
-        this.status = ReservationStatus.PENDING; // toda reserva nace pendiente
+        this.expiresAt = createdAt.plusMinutes(RESERVATION_MINUTES);
+        this.status = ReservationStatus.PENDING; // every reservation starts as PENDING
     }
 
     public LocalDateTime getCreatedAt() {
@@ -24,8 +24,8 @@ public class Reservation {
         return expiresAt;
     }
 
-    // La hora llega por parámetro (no now()) para poder testearla.
-    // Justo en expiresAt aún es válida; caduca después.
+    // Time is passed in (not now()) so it can be tested.
+    // Still valid exactly at expiresAt; expired after that.
     public boolean isExpired(LocalDateTime now) {
         return now.isAfter(expiresAt);
     }
@@ -34,7 +34,7 @@ public class Reservation {
         return status;
     }
 
-    // Confirma la reserva si sigue pendiente y no ha caducado.
+    // Confirms the reservation only if it is PENDING and not expired.
     public void confirm(LocalDateTime now) {
         if (status != ReservationStatus.PENDING) {
             throw new IllegalStateException("Only PENDING reservations can be confirmed");

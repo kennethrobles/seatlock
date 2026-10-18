@@ -43,7 +43,28 @@ class ReservationTest {
     @Test
     void confirmBeforeExpirationSetsConfirmed() {
         Reservation r = new Reservation(CREATED);
-        r.confirm(CREATED.plusMinutes(5)); 
+        r.confirm(CREATED.plusMinutes(5));
         assertEquals(ReservationStatus.CONFIRMED, r.getStatus());
+    }
+
+    @Test
+    void confirmAfterExpirationThrows() {
+        Reservation r = new Reservation(CREATED);
+        try {
+            r.confirm(CREATED.plusMinutes(11)); // already expired: must throw
+            fail("Expected IllegalStateException"); // reached only if nothing was thrown
+        } catch (IllegalStateException e) {
+        }
+    }
+
+    @Test
+    void confirmTwiceThrows() {
+        Reservation r = new Reservation(CREATED);
+        r.confirm(CREATED.plusMinutes(5)); // first confirm: valid
+        try {
+            r.confirm(CREATED.plusMinutes(6)); // no longer PENDING: must throw
+            fail("Expected IllegalStateException"); // reached only if nothing was thrown
+        } catch (IllegalStateException e) {
+        }
     }
 }
