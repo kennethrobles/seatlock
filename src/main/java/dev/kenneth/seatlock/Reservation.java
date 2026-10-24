@@ -24,10 +24,9 @@ public class Reservation {
         return expiresAt;
     }
 
-    // Time is passed in (not now()) so it can be tested.
-    // Still valid exactly at expiresAt; expired after that.
+  // Only PENDING reservations expire: still valid exactly at expiresAt, expired after that.
     public boolean isExpired(LocalDateTime now) {
-        return now.isAfter(expiresAt);
+        return now.isAfter(expiresAt) && this.status == ReservationStatus.PENDING;
     }
 
     public ReservationStatus getStatus() {

@@ -59,4 +59,11 @@ class ReservationTest {
         r.confirm(CREATED.plusMinutes(5)); // first confirm: valid
         assertThrows(IllegalStateException.class, () -> r.confirm(CREATED.plusMinutes(6)));
     }
+
+    @Test 
+    void confirmedReservationNeverExpires() {
+        Reservation r = new Reservation(CREATED);
+        r.confirm(CREATED.plusMinutes(5));
+        assertFalse(r.isExpired(CREATED.plusMinutes(11)));
+    }
 }
