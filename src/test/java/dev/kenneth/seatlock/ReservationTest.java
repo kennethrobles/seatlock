@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 class ReservationTest {
 
-    // Todas las reservas se crean a las 10:00 → caducan a las 10:10.
+// All reservations are created at 10:00, so they expire at 10:10.
     private static final LocalDateTime CREATED = LocalDateTime.of(2026, 10, 17, 10, 0);
 
     @Test
@@ -50,21 +50,13 @@ class ReservationTest {
     @Test
     void confirmAfterExpirationThrows() {
         Reservation r = new Reservation(CREATED);
-        try {
-            r.confirm(CREATED.plusMinutes(11)); // already expired: must throw
-            fail("Expected IllegalStateException"); // reached only if nothing was thrown
-        } catch (IllegalStateException e) {
-        }
+        assertThrows(IllegalStateException.class, () -> r.confirm(CREATED.plusMinutes(11)));
     }
 
     @Test
     void confirmTwiceThrows() {
         Reservation r = new Reservation(CREATED);
         r.confirm(CREATED.plusMinutes(5)); // first confirm: valid
-        try {
-            r.confirm(CREATED.plusMinutes(6)); // no longer PENDING: must throw
-            fail("Expected IllegalStateException"); // reached only if nothing was thrown
-        } catch (IllegalStateException e) {
-        }
+        assertThrows(IllegalStateException.class, () -> r.confirm(CREATED.plusMinutes(6)));
     }
 }
