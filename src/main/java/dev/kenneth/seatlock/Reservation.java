@@ -1,6 +1,4 @@
 package dev.kenneth.seatlock;
-
-import java.io.ObjectInputFilter.Status;
 import java.time.LocalDateTime;
 
 // Temporary seat reservation: expires 10 minutes after creation.
