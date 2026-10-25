@@ -1,5 +1,6 @@
 package dev.kenneth.seatlock;
 
+import java.io.ObjectInputFilter.Status;
 import java.time.LocalDateTime;
 
 // Temporary seat reservation: expires 10 minutes after creation.
@@ -24,12 +25,17 @@ public class Reservation {
         return expiresAt;
     }
 
-  // Only PENDING reservations expire: still valid exactly at expiresAt, expired after that.
+    // Only PENDING reservations expire: still valid exactly at expiresAt, expired
+    // after that.
     public boolean isExpired(LocalDateTime now) {
         return now.isAfter(expiresAt) && this.status == ReservationStatus.PENDING;
     }
 
-    public ReservationStatus getStatus() {
+    // Effective status: a PENDING reservation past expiresAt is shown as EXPIRED.
+    public ReservationStatus getStatus(LocalDateTime now) {
+        if (isExpired(now)) {
+            return ReservationStatus.EXPIRED;
+        }
         return status;
     }
 
