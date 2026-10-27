@@ -21,7 +21,7 @@ Only `PENDING` reservations can expire. A `CONFIRMED` reservation never expires.
 - [x] Phase 0: Java review
 - [ ] Phase 1: Domain in plain Java (in progress)
   - [x] `Reservation`: states, confirm, expiration and effective status
-  - [ ] `Seat`
+  - [x] `Seat`: occupied if it has an active reservation
 - [ ] Phase 2: PostgreSQL and data
 - [ ] Phase 3: REST API with Spring Boot
 - [ ] Phase 4: Concurrency: reproduce and fix double booking
