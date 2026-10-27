@@ -80,4 +80,29 @@ class ReservationTest {
         Reservation r = new Reservation(CREATED);
         assertEquals(ReservationStatus.EXPIRED, r.getStatus(CREATED.plusMinutes(10).plusSeconds(1)));
     }
+
+    @Test
+    void isActiveWhilePending() {
+        Reservation r = new Reservation(CREATED);
+        assertTrue(r.isActive(CREATED.plusMinutes(5)));
+    }
+
+    @Test
+    void isActiveExactlyAtExpiresAt() {
+        Reservation r = new Reservation(CREATED);
+        assertTrue(r.isActive(CREATED.plusMinutes(10)));
+    }
+
+    @Test
+    void isNotActiveOneSecondAfterExpiresAt() {
+        Reservation r = new Reservation(CREATED);
+        assertFalse(r.isActive(CREATED.plusMinutes(10).plusSeconds(1)));
+    }
+
+    @Test
+    void confirmedReservationIsActiveAfterExpiresAt() {
+        Reservation r = new Reservation(CREATED);
+        r.confirm(CREATED.plusMinutes(5));
+        assertTrue(r.isActive(CREATED.plusHours(1)));
+    }
 }

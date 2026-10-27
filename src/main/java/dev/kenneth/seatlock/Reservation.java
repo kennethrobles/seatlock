@@ -48,4 +48,8 @@ public class Reservation {
         }
         status = ReservationStatus.CONFIRMED;
     }
+
+    public boolean isActive(LocalDateTime now) {
+        return !isExpired(now);
+    }
 }
