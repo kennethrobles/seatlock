@@ -11,3 +11,12 @@ CREATE TABLE seat (
     code     VARCHAR(10) NOT NULL,
     UNIQUE (event_id, code)
 );
+
+-- Reservations of a seat: PENDING for 10 minutes, then CONFIRMED or EXPIRED
+CREATE TABLE reservation (
+    id         BIGINT      PRIMARY KEY,
+    seat_id    BIGINT      NOT NULL REFERENCES seat(id),
+    created_at TIMESTAMPTZ NOT NULL,
+    expires_at TIMESTAMPTZ NOT NULL,
+    status     VARCHAR(20) NOT NULL
+);
