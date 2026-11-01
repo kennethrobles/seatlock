@@ -21,3 +21,7 @@ CREATE TABLE reservation (
     status     VARCHAR(20) NOT NULL,
     CONSTRAINT valid_status CHECK (status IN('PENDING', 'CONFIRMED', 'EXPIRED'))
 );
+
+CREATE UNIQUE INDEX one_confirmed_per_seat
+ON reservation (seat_id)
+WHERE status = 'CONFIRMED';
