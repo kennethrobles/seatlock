@@ -18,5 +18,6 @@ CREATE TABLE reservation (
     seat_id    BIGINT      NOT NULL REFERENCES seat(id),
     created_at TIMESTAMPTZ NOT NULL,
     expires_at TIMESTAMPTZ NOT NULL,
-    status     VARCHAR(20) NOT NULL
+    status     VARCHAR(20) NOT NULL,
+    CONSTRAINT valid_status CHECK (status IN('PENDING', 'CONFIRMED', 'EXPIRED'))
 );
