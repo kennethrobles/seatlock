@@ -1,6 +1,6 @@
 package dev.kenneth.seatlock;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class Seat {
     }
 
     // Occupied if any of its reservations is active at that time.
-    public boolean isOccupied(LocalDateTime now) {
+    public boolean isOccupied(Instant now) {
         for (Reservation reservation : reservations) {
             if (reservation.isActive(now)) {
                 return true;
