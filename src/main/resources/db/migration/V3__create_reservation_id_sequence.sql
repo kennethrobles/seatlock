@@ -1,0 +1,1 @@
+CREATE SEQUENCE reservation_id_seq;
