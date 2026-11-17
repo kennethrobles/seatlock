@@ -3,6 +3,7 @@ package dev.kenneth.seatlock;
 import java.time.Instant;
 
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 @Service
 public class ReservationService {
@@ -16,5 +17,9 @@ public class ReservationService {
     public ReservationEntity createReservation(long seatId, Instant createdAt) {
         ReservationEntity reservation = new ReservationEntity(seatId, createdAt);
         return repository.save(reservation);
+    }
+    public Optional<ReservationEntity> findReservation(Long id) {
+        Optional<ReservationEntity> result = repository.findById(id);
+        return result;
     }
 }
