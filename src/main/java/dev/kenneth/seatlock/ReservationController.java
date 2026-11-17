@@ -1,11 +1,12 @@
 package dev.kenneth.seatlock;
 
+import java.time.Instant;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import java.time.Instant;
 
 @RestController
 public class ReservationController {
@@ -20,16 +21,20 @@ public class ReservationController {
     public Long createReservation(@PathVariable long seatId) {
         ReservationEntity guardada = service.createReservation(seatId, Instant.now());
         return guardada.getId();
-    } // Aquí termina createReservation
+    }
 
     @GetMapping("/reservations/{id}")
-    public ResponseEntity<Long> findReservation(@PathVariable Long id) {
+    public ResponseEntity<ReservationResponse> findReservation(@PathVariable Long id) {
         var resultado = service.findReservation(id);
 
         if (resultado.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(resultado.get().getId());
+        ReservationEntity reservation = resultado.get();
+        ReservationResponse response = new ReservationResponse(reservation.getId(), reservation.getSeatId(),
+                reservation.getCreatedAt(), reservation.getExpiresAt());
+
+        return ResponseEntity.ok(response);
     }
 }
