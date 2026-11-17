@@ -13,13 +13,8 @@ public class SeatService {
         this.repository = repository;
     }
 
-    public String findSeat(Long id) {
+    public Optional<SeatEntity> findSeat(Long id) {
         Optional<SeatEntity> result = repository.findById(id);
-
-        if (result.isPresent()) {
-            SeatEntity seat = result.get();
-            return "Seat code: " + seat.getCode();
-        }
-        return "Seat not found";
+        return result;
     }
 }

@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "seat")
-public class    SeatEntity {
+public class SeatEntity {
 
     @Id
     @Column(name = "id")
