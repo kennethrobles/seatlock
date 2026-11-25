@@ -1,15 +1,16 @@
 package dev.kenneth.seatlock;
 
+import java.time.Instant;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import java.time.Instant;
 
 @Entity
 @Table(name = "reservation")
@@ -57,5 +58,16 @@ public class ReservationEntity {
 
     public Instant getExpiresAt() {
         return expiresAt;
+    }
+
+    public Reservation toDomain() {
+        Reservation reservation = new Reservation(createdAt, expiresAt, status);
+        return reservation;
+    }
+
+    public void confirm(Instant now) {
+        Reservation reservation = toDomain();
+        reservation.confirm(now);
+        this.status = reservation.getStatus(now);
     }
 }

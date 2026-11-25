@@ -2,7 +2,7 @@ package dev.kenneth.seatlock;
 
 import java.time.Instant;
 
-// Temporary seat reservation: expires 10 minutes after creation.
+// A new reservation holds a seat for ten minutes or until it is confirmed.
 public class Reservation {
     private static final int RESERVATION_MINUTES = 10;
 
@@ -13,7 +13,14 @@ public class Reservation {
     public Reservation(Instant createdAt) {
         this.createdAt = createdAt;
         this.expiresAt = createdAt.plusSeconds(RESERVATION_MINUTES * 60);
-        this.status = ReservationStatus.PENDING; // every reservation starts as PENDING
+        this.status = ReservationStatus.PENDING;
+    }
+
+    // Reuse the stored expiry and status when rebuilding a reservation.
+    public Reservation(Instant createdAt, Instant expiresAt, ReservationStatus status) {
+        this.createdAt = createdAt;
+        this.expiresAt = expiresAt;
+        this.status = status;
     }
 
     public Instant getCreatedAt() {
@@ -50,6 +57,9 @@ public class Reservation {
     }
 
     public boolean isActive(Instant now) {
-        return !isExpired(now);
+        if (getStatus(now) == ReservationStatus.EXPIRED) {
+            return false;
+        }
+        return true;
     }
 }

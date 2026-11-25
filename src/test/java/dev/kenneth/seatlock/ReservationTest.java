@@ -106,4 +106,20 @@ class ReservationTest {
         r.confirm(CREATED.plusSeconds(300));
         assertTrue(r.isActive(CREATED.plusSeconds(3600)));
     }
+
+    @Test
+    void restoresStoredDatesAndStatus() {
+        Instant storedExpiresAt = CREATED.plusSeconds(420);
+        Reservation r = new Reservation(CREATED, storedExpiresAt, ReservationStatus.CONFIRMED);
+        assertEquals(CREATED, r.getCreatedAt());
+        assertEquals(storedExpiresAt, r.getExpiresAt());
+        assertEquals(ReservationStatus.CONFIRMED, r.getStatus(CREATED));
+    }
+
+    @Test
+    void restoredExpiredReservationIsNotActive() {
+        Instant storedExpiresAt = CREATED.plusSeconds(600);
+        Reservation r = new Reservation(CREATED, storedExpiresAt, ReservationStatus.EXPIRED);
+        assertFalse(r.isActive(CREATED.plusSeconds(601)));
+    }
 }
