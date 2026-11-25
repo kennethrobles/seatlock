@@ -1,43 +1,47 @@
 # SeatLock
 
-A REST API to book seats for events, like concerts or theater. The main goal: **never sell the same seat twice**, even when two people try to book it at the same moment.
+SeatLock is a Java REST API for reserving and confirming seats at events. It is a portfolio project in progress built with Java 25, Spring Boot, Spring Data JPA, PostgreSQL, Flyway and JUnit.
 
-> 🚧 Work in progress. I'm building it step by step while learning Java backend.
+## What works today
 
-## The problem
+| Request | Result |
+| --- | --- |
+| `GET /seats/{id}` | Returns the seat code or `404`. |
+| `POST /seats/{seatId}/reservations` | Creates a pending reservation and returns its generated ID. |
+| `GET /reservations/{id}` | Returns the reservation ID, seat ID and timestamps, or `404`. |
+| `POST /reservations/{id}/confirm` | Confirms a pending reservation within its hold period and returns `204`, or `404` if the reservation does not exist. |
 
-If two requests check "is this seat free?" at the same time, both can get "yes" and both book it. The seat is sold twice. This is called a race condition. SeatLock will reproduce this bug with a test and then fix it.
+A reservation starts as `PENDING` for ten minutes. It can be confirmed up to and including its expiry time. The domain rejects late and repeated confirmations. The service loads and updates the reservation in one transaction.
 
-## How a reservation works
+PostgreSQL limits each seat to one confirmed reservation. The next milestone is to reproduce overlapping pending holds and test the concurrency fix. Automatic expiry cleanup, consistent HTTP conflict responses and CI are planned.
 
-1. A client reserves a seat. The reservation is `PENDING` for 10 minutes.
-2. The client can confirm it until `expiresAt` (included). It becomes `CONFIRMED`.
-3. If nobody confirms it in time, it becomes `EXPIRED` and the seat is free again.
+## Run locally
 
-Only `PENDING` reservations can expire. A `CONFIRMED` reservation never expires.
+Install Java 25, Maven and Docker with Compose.
 
-## Progress
+For a fresh database, export `SEATLOCK_DB_PASSWORD` with a password you choose for local PostgreSQL, then run:
 
-- [x] Phase 0: Java review
-- [x] Phase 1: Domain in plain Java
-  - [x] `Reservation`: states, confirm, expiration and effective status
-  - [x] `Seat`: occupied if it has an active reservation
-- [ ] Phase 2: PostgreSQL and data (in progress)
-- [ ] Phase 3: REST API with Spring Boot
-- [ ] Phase 4: Concurrency: reproduce and fix double booking
-- [ ] Phase 5: Expiration job and clear HTTP errors
-- [ ] Phase 6: Run with one command, CI and API docs
+```sh
+docker compose up -d db
+docker compose exec -T db pg_isready -U seatlock -d seatlock
+SEATLOCK_FLYWAY_ENABLED=true mvn spring-boot:run
+```
 
-## Tech stack
+Start Spring after PostgreSQL reports that it is accepting connections. Flyway applies V1–V3 to create the schema, insert sample events and seats, and create the reservation ID sequence. Use the same flag on later launches of that Flyway-managed database. For a database that was initialized manually, use its existing password and run `mvn spring-boot:run` with Flyway disabled (the default).
 
-**Now:** Java 25, Maven, JUnit.
+The API listens on port `8080`:
 
-**Planned:** Spring Boot, PostgreSQL, JPA/Hibernate, Flyway, Testcontainers, Docker Compose, GitHub Actions.
+```sh
+curl -i http://localhost:8080/seats/1
+curl -sS -X POST http://localhost:8080/seats/1/reservations
+```
+
+Use the returned ID with `GET /reservations/{id}` or `POST /reservations/{id}/confirm`.
 
 ## Run the tests
 
-You need Java 25 and Maven.
-
-```
+```sh
 mvn test
 ```
+
+The unit tests cover reservation states, expiry boundaries, entity conversion and seat occupancy. They run without PostgreSQL.
